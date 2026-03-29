@@ -1,9 +1,8 @@
 ktor:
   application:
     modules:
-      - com.facundo.ApplicationKt.module  # coincide con tu group
-  deployment:
-    port: 8082  # 8081 para no chocar con la Fase 1 en 8080
+      - com.facundo.ApplicationKt.module
+    port: 8082
 
 database:
   url: "jdbc:postgresql://localhost:5433/taskflow_chat"

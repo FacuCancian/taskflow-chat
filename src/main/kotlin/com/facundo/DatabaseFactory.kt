@@ -8,6 +8,7 @@ import io.ktor.server.config.ApplicationConfig
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import com.facundo.features.chat.Messages
 
 object DatabaseFactory {
 
@@ -23,9 +24,10 @@ object DatabaseFactory {
         val dataSource = HikariDataSource(hikariConfig)
         Database.connect(dataSource)
 
-        // Crea las tablas si no existen
+
         transaction {
             SchemaUtils.createMissingTablesAndColumns(Users)
+            SchemaUtils.createMissingTablesAndColumns(Users, Messages)
         }
     }
 }

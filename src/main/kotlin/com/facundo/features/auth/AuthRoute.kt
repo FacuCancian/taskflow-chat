@@ -28,11 +28,10 @@ fun Route.authRoutes() {
             )
         }
 
-        // Hashear la contraseña — nunca guardar en texto plano
+
         val passwordHash = BCrypt.withDefaults()
             .hashToString(12, body.password.toCharArray())
 
-        // Insertar en DB
         val userId = try {
             transaction {
                 Users.insert {
@@ -67,7 +66,7 @@ fun Route.authRoutes() {
     post("/auth/login") {
         val body = call.receive<LoginRequest>()
 
-        // Buscar el usuario por email
+
         val row = transaction {
             Users.selectAll().where { Users.email eq body.email.lowercase() }
                 .singleOrNull()
@@ -76,7 +75,7 @@ fun Route.authRoutes() {
             mapOf("error" to "Credenciales inválidas")
         )
 
-        // Verificar la contraseña contra el hash
+
         val isValid = BCrypt.verifyer()
             .verify(body.password.toCharArray(), row[Users.passwordHash])
             .verified
