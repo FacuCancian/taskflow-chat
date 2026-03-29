@@ -11,6 +11,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 import java.util.UUID
 import io.ktor.server.response.*
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 fun Route.chatRoutes() {
 
     // Historial de mensajes
@@ -34,7 +36,11 @@ fun Route.chatRoutes() {
     // WebSocket
     webSocket("/chat/ws") {
         val sessionId = UUID.randomUUID().toString()
-        val username = call.request.queryParameters["username"] ?: "anonimo"
+        val token = call.request.queryParameters["token"]
+            ?: return@webSocket close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Token requerido"))
+
+        val (userId, username) = extractUserFromToken(token)
+            ?: return@webSocket close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Token inválido"))
 
         ChatSessionManager.join(sessionId, this)
 
@@ -58,7 +64,7 @@ fun Route.chatRoutes() {
 
                     transaction {
                         Messages.insert {
-                            it[userId] = null
+                            it[Messages.userId] = userId
                             it[Messages.username] = username
                             it[content] = incoming.content.trim()
                         }
@@ -85,5 +91,20 @@ fun Route.chatRoutes() {
                 )
             )
         }
+    }
+
+}
+private fun extractUserFromToken(token: String): Pair<Long, String>? {
+    return try {
+        val verifier = JWT
+            .require(Algorithm.HMAC256("secreto-local-cambiar-en-produccion"))
+            .withIssuer("taskflow-chat")
+            .build()
+        val decoded = verifier.verify(token)
+        val userId = decoded.getClaim("userId").asLong()
+        val username = decoded.getClaim("username").asString()
+        if (userId != null && username != null) Pair(userId, username) else null
+    } catch (e: Exception) {
+        null
     }
 }

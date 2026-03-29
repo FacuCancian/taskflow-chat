@@ -87,8 +87,23 @@ fun Route.authRoutes() {
             )
         }
 
+        val token = JWT.create()
+            .withIssuer("taskflow-chat")
+            .withAudience("taskflow-users")
+            .withClaim("userId", row[Users.id])
+            .withClaim("username", row[Users.username])
+            .withExpiresAt(Date(System.currentTimeMillis() + 86_400_000L))
+            .sign(Algorithm.HMAC256("secreto-local-cambiar-en-produccion"))
+
         call.respond(
-            mapOf("message" to "Login correcto, usuario: ${row[Users.username]}")
+            AuthResponse(
+                token = token,
+                user = UserDto(
+                    id = row[Users.id],
+                    username = row[Users.username],
+                    email = row[Users.email]
+                )
+            )
         )
     }
 }
