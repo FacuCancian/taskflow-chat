@@ -3,6 +3,7 @@ package com.facundo.features.auth
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.facundo.config.JwtConfig
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -50,7 +51,7 @@ fun Route.authRoutes() {
             .withClaim("userId", userId)
             .withClaim("username", body.username.trim())
             .withExpiresAt(Date(System.currentTimeMillis() + 86_400_000L))
-            .sign(Algorithm.HMAC256("secreto-local-cambiar-en-produccion"))
+            .sign(Algorithm.HMAC256(JwtConfig.secret))
 
         call.respond(
             HttpStatusCode.Created,
@@ -90,8 +91,7 @@ fun Route.authRoutes() {
             .withClaim("userId", row[Users.id])
             .withClaim("username", row[Users.username])
             .withExpiresAt(Date(System.currentTimeMillis() + 86_400_000L))
-            .sign(Algorithm.HMAC256("secreto-local-cambiar-en-produccion"))
-
+            .sign(Algorithm.HMAC256(JwtConfig.secret))
         call.respond(
             AuthResponse(
                 token = token,

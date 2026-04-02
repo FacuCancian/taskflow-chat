@@ -1,5 +1,6 @@
 package com.facundo
 
+import com.facundo.config.JwtConfig
 import com.facundo.config.configureRouting
 import com.facundo.config.configureSecurity
 import com.facundo.config.configureSerialization
@@ -11,6 +12,8 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    JwtConfig.init(environment.config)
+    DatabaseFactory.init(environment.config)
     DatabaseFactory.init(environment.config)
     configureSecurity()
     configureSockets()

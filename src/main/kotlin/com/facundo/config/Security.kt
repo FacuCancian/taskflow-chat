@@ -11,7 +11,8 @@ fun Application.configureSecurity() {
         jwt("jwt-auth") {
             realm = "taskflow-chat"
             verifier(
-                JWT.require(Algorithm.HMAC256("secreto-local-cambiar-en-produccion"))
+                JWT.require(Algorithm.HMAC256(JwtConfig.secret))
+                    .withIssuer(JwtConfig.issuer)
                     .withIssuer("taskflow-chat")
                     .withAudience("taskflow-users")
                     .build()

@@ -13,6 +13,7 @@ import java.util.UUID
 import io.ktor.server.response.*
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.facundo.config.JwtConfig
 
 fun Route.chatRoutes() {
 
@@ -99,7 +100,8 @@ fun Route.chatRoutes() {
 private fun extractUserFromToken(token: String): Pair<Long, String>? {
     return try {
         val verifier = JWT
-            .require(Algorithm.HMAC256("secreto-local-cambiar-en-produccion"))
+            .require(Algorithm.HMAC256(JwtConfig.secret))
+            .withIssuer(JwtConfig.issuer)
             .withIssuer("taskflow-chat")
             .build()
         val decoded = verifier.verify(token)

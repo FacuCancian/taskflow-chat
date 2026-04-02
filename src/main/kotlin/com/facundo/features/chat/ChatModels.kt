@@ -1,7 +1,7 @@
 package com.facundo.features.chat
 
 import kotlinx.serialization.Serializable
-
+@Serializable
 data class MessageDto(
     val id: Long,
     val userId: Long,
