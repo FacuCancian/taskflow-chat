@@ -13,9 +13,10 @@ import java.util.UUID
 import io.ktor.server.response.*
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+
 fun Route.chatRoutes() {
 
-    // Historial de mensajes
+    // msj history
     get("/messages") {
         val messages = transaction {
             Messages.selectAll()
@@ -37,10 +38,10 @@ fun Route.chatRoutes() {
     webSocket("/chat/ws") {
         val sessionId = UUID.randomUUID().toString()
         val token = call.request.queryParameters["token"]
-            ?: return@webSocket close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Token requerido"))
+            ?: return@webSocket close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Token required"))
 
         val (userId, username) = extractUserFromToken(token)
-            ?: return@webSocket close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Token inválido"))
+            ?: return@webSocket close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Token invalid"))
 
         ChatSessionManager.join(sessionId, this)
 
@@ -48,7 +49,7 @@ fun Route.chatRoutes() {
             OutgoingMessage(
                 type = "joined",
                 username = username,
-                content = "$username se unió al chat",
+                content = "$username join",
                 timestamp = LocalDateTime.now().toString()
             )
         )
@@ -86,7 +87,7 @@ fun Route.chatRoutes() {
                 OutgoingMessage(
                     type = "left",
                     username = username,
-                    content = "$username salió del chat",
+                    content = "$username left the chat",
                     timestamp = LocalDateTime.now().toString()
                 )
             )
@@ -94,6 +95,7 @@ fun Route.chatRoutes() {
     }
 
 }
+
 private fun extractUserFromToken(token: String): Pair<Long, String>? {
     return try {
         val verifier = JWT

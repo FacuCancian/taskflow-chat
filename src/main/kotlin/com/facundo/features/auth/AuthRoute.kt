@@ -1,30 +1,27 @@
 package com.facundo.features.auth
 
 import at.favre.lib.crypto.bcrypt.BCrypt
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
-import java.util.Date
+import java.util.*
+
 fun Route.authRoutes() {
 
     post("/auth/register") {
         val body = call.receive<RegisterRequest>()
 
-        // Validación básica
+        // validation
         if (body.username.isBlank() || body.email.isBlank() || body.password.length < 6) {
             return@post call.respond(
                 HttpStatusCode.BadRequest,
-                mapOf("error" to "Datos inválidos")
+                mapOf("error" to "invalid data")
             )
         }
 
@@ -43,7 +40,7 @@ fun Route.authRoutes() {
         } catch (e: Exception) {
             return@post call.respond(
                 HttpStatusCode.Conflict,
-                mapOf("error" to "El usuario o email ya existe")
+                mapOf("error" to "user or email existing")
             )
         }
 
@@ -72,7 +69,7 @@ fun Route.authRoutes() {
                 .singleOrNull()
         } ?: return@post call.respond(
             HttpStatusCode.Unauthorized,
-            mapOf("error" to "Credenciales inválidas")
+            mapOf("error" to "invalid credentials")
         )
 
 
@@ -83,7 +80,7 @@ fun Route.authRoutes() {
         if (!isValid) {
             return@post call.respond(
                 HttpStatusCode.Unauthorized,
-                mapOf("error" to "Credenciales inválidas")
+                mapOf("error" to "invalid credentials")
             )
         }
 

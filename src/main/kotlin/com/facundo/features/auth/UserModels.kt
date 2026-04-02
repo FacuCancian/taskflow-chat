@@ -1,6 +1,6 @@
 package com.facundo.features.auth
 
-import kotlinx.serialization.Serializable//generate serialization in compilation
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class RegisterRequest(
