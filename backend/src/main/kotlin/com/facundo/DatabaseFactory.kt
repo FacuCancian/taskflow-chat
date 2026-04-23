@@ -16,8 +16,8 @@ object DatabaseFactory {
         val hikariConfig = if (databaseUrl != null) {
             val uri = URI(databaseUrl)
 
-            val username = uri.userInfo.split(":")[0]
-            val password = uri.userInfo.split(":")[1]
+            val username = System.getenv("DATABASE_USER")
+            val password = System.getenv("DATABASE_PASSWORD")
 
             val jdbcUrl =
                 "jdbc:postgresql://${uri.host}:${uri.port}${uri.path}?sslmode=require"
