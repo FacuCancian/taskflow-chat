@@ -23,7 +23,7 @@ object DatabaseFactory {
                 "jdbc:postgresql://${uri.host}:${uri.port}/${uri.path}?sslmode=require"
 
             HikariConfig().apply {
-                this.jdbcUrl = jdbcUrl
+                this.jdbcUrl = databaseUrl
                 this.driverClassName = "org.postgresql.Driver"
                 this.username = username
                 this.password = password
