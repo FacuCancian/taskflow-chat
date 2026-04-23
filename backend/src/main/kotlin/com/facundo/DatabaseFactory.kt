@@ -20,7 +20,7 @@ object DatabaseFactory {
             val password = System.getenv("DATABASE_PASSWORD")
 
             val jdbcUrl =
-                "jdbc:postgresql://${uri.host}:${uri.port}${uri.path}?sslmode=require"
+                "jdbc:postgresql://${uri.host}:${uri.port}/${uri.path}?sslmode=require"
 
             HikariConfig().apply {
                 this.jdbcUrl = jdbcUrl
