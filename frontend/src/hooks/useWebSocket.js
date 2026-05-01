@@ -12,7 +12,13 @@ export function useWebSocket(token) {
   const connect = useCallback(() => {
     if (!token) return
 
-    ws.current = new WebSocket(`ws://localhost:8082/chat/ws?token=${token}`)
+    const baseUrl = import.meta.env.VITE_API_URL
+
+    const wsUrl = baseUrl
+      .replace('https://', 'wss://')
+      .replace('http://', 'ws://')
+
+    ws.current = new WebSocket(`${wsUrl}/chat/ws?token=${token}`)
 
     ws.current.onopen = () => {
       setConnected(true)
