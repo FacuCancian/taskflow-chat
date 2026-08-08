@@ -78,8 +78,8 @@ docker-compose up -d
 ```bash
 cd backend
 DATABASE_URL=jdbc:postgresql://localhost:5433/taskflow_chat \
-DATABASE_USER=taskflow \
-DATABASE_PASSWORD=taskflow123 \
+DATABASE_USER=tu_usuario \
+DATABASE_PASSWORD=tu_contraseña \
 JWT_SECRET=tu-secreto \
 ./gradlew run
 ```
